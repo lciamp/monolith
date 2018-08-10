@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, request
 from ..database import db, User
-#from monolith.auth import admin_required
+from ..auth import admin_required
 from ..forms import UserForm
 
 
@@ -8,6 +8,7 @@ users = Blueprint('users', __name__)
 
 
 @users.route('/create_user', methods=['GET', 'POST'])
+@admin_required
 def create_user():
     form = UserForm()
     if request.methos == 'POST':

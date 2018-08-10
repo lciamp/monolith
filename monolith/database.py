@@ -21,6 +21,8 @@ class User(db.Model):
     max_hr = db.Column(db.Integer)
     rest_hr = db.Column(db.Integer)
     vo2max = db.Column(db.Numeric(4, 2))
+    is_active = db.Column(db.Boolean, default=True)
+    is_admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

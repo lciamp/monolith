@@ -1,13 +1,45 @@
-from flask import Blueprint
-from flask_login import LoginManager, logout_user, logout_user
+from ..app import app
+from flask import Blueprint, redirect, render_template, request
+from flask_login import login_user, logout_user, login_required, current_user
 from monolith.forms import LoginForm
 from monolith.database import db, User
+from stravalib import Client
+
 
 auth = Blueprint('auth', __name__)
+
+
+@auth.route('/strava_auth')
+@login_required
+def _strava_auth():
+    client = Client()
+    code = request.args.get('code')
+    xc = client.exchange_code_for_token
+    access_token = xc(client_id=app.config['STRAVA_CLIENT_ID'],
+                      client_secret=app.config['STRAVA_CLIENT_SECRET'],
+                      code=code)
+    current_user.strava_token = access_token
+    db.session.add(current_user)
+    db.session.commit()
+    return redirect('/')
+
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         email, password = form.data['email'], form.data['password']
-        q = db.session.query(User).filter(User.email==email).first()
+        q = db.session.query(User).filter(User.email == email)
+        user = q.first()
+        if user is not None and user.authenticate(password):
+            login_user(user)
+            return redirect('/')
+    return render_template('login.html', form=form)
+
+
+@auth.route('/logout')
+def logout():
+    logout_user()
+    return redirect('/')
+
+

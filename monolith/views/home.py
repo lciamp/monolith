@@ -7,6 +7,7 @@ from monolith.app import app
 
 home = Blueprint('home', __name__)
 
+
 def get_strava_auth_url():
     client = Client()
     client_id = app.config['STRAVA_CLIENT_ID']
@@ -16,17 +17,5 @@ def get_strava_auth_url():
     return url
 
 
-@app.route('/strava_auth')
-@login_required
-def _strava_auth():
-    client = Client()
-    code = request.args.get('code')
-    xc = client.exchange_code_for_token
-    access_token = xc(client_id=app.config['STRAVA_CLIENT_ID'],
-                      client_secret=app.config['STRAVA_CLIENT_SECRET'],
-                      code=code)
-    current_user.strava_token = access_token
-    db.session.add(current_user)
-    db.session.commit()
-    return redirect('/')
+
 
