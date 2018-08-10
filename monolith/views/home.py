@@ -15,6 +15,7 @@ def get_strava_auth_url():
                                    redirect=redirect)
     return url
 
+
 @app.route('/strava_auth')
 @login_required
 def _strava_auth():

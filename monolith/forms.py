@@ -14,3 +14,9 @@ class UserForm(FlaskForm):
     vo2max = f.FloatField('vo2max')
 
     display = ['email', 'firstname', 'lastname', 'password', 'age', 'weight', 'max_hr', 'rest_hr', 'vo2max']
+
+class LoginForm(FlaskForm):
+    email = f.StringField('email', validators=[DataRequired()])
+    password = f.PasswordField('password', validators=[DataRequired()])
+    display = ['email', 'password']
+
